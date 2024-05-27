@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13,6 +22,16 @@ const HTTP_STATUSES = {
     BAD_REQUEST_400: 400,
     NOT_FOUNDED_404: 404,
 };
+const url = "mongodb://localhost:27017/main"; // указываем имя нужной базы
+const mongoose = require("mongoose");
+mongoose.connect(url);
+const MovieSchema = new mongoose.Schema({
+    // определяем схему
+    title: String,
+    year: Number,
+    rating: Number,
+});
+const Movie = mongoose.model("Movie", MovieSchema); // создаем модель по схеме
 const requestMiddleware = express_1.default.json();
 app.use(requestMiddleware);
 const db = {
@@ -22,6 +41,14 @@ const db = {
         { id: 3, title: "Lexus" },
     ],
 };
+app.post("/movies", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const movie = yield Movie.create({
+        title: req.body.title,
+        year: req.body.year,
+        rating: req.body.rating,
+    });
+    return res.status(201).json("movie created"); // возвращаем ответ
+}));
 app.get("/", (req, res) => {
     res.send("hello worl1!");
 });

@@ -13,6 +13,18 @@ const HTTP_STATUSES = {
   NOT_FOUNDED_404: 404,
 };
 
+const url = "mongodb://localhost:27017/main"; // указываем имя нужной базы
+const mongoose = require("mongoose");
+mongoose.connect(url);
+
+const MovieSchema = new mongoose.Schema({
+  // определяем схему
+  title: String,
+  year: Number,
+  rating: Number,
+});
+const Movie = mongoose.model("Movie", MovieSchema); // создаем модель по схеме
+
 const requestMiddleware = express.json();
 app.use(requestMiddleware);
 
@@ -23,6 +35,15 @@ const db = {
     { id: 3, title: "Lexus" },
   ],
 };
+
+app.post("/movies", async (req, res) => {
+  const movie = await Movie.create({
+    title: req.body.title,
+    year: req.body.year,
+    rating: req.body.rating,
+  });
+  return res.status(201).json("movie created"); // возвращаем ответ
+});
 
 app.get("/", (req, res) => {
   res.send("hello worl1!");
