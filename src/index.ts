@@ -1,4 +1,7 @@
 import express from "express";
+const mongoose = require("mongoose");
+
+const { Schema } = mongoose;
 
 const app = express();
 
@@ -14,15 +17,22 @@ const HTTP_STATUSES = {
 };
 
 const url = "mongodb://localhost:27017/main"; // указываем имя нужной базы
-const mongoose = require("mongoose");
 mongoose.connect(url);
 
-const MovieSchema = new mongoose.Schema({
-  // определяем схему
+const CategorySchemaDrama = new Schema({
+  _id: Schema.Types.ObjectId,
+  title: String,
+});
+
+const Category = mongoose.model("Category", CategorySchemaDrama);
+
+const MovieSchema = new Schema({
   title: String,
   year: Number,
   rating: Number,
+  category: { type: Schema.Types.ObjectId, ref: "Category" },
 });
+
 const Movie = mongoose.model("Movie", MovieSchema); // создаем модель по схеме
 
 const requestMiddleware = express.json();
@@ -37,10 +47,15 @@ const db = {
 };
 
 app.post("/movies", async (req, res) => {
+  const category = await Category.create({
+    _id: new mongoose.Types.ObjectId(),
+    title: req.body.category,
+  });
   const movie = await Movie.create({
     title: req.body.title,
     year: req.body.year,
     rating: req.body.rating,
+    category: category._id,
   });
   return res.status(201).json("movie created"); // возвращаем ответ
 });
