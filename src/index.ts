@@ -1,9 +1,20 @@
 import express from "express";
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const { Schema } = mongoose;
 
 const app = express();
+
+const allowedOrigins = [
+  "", // один или несколько хостов
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+  })
+);
 
 const port = process.env.PORT || 3000;
 
@@ -58,6 +69,14 @@ app.post("/movies", async (req, res) => {
     category: category._id,
   });
   return res.status(201).json("movie created"); // возвращаем ответ
+});
+
+app.delete("/movies/:title", async (req, res) => {
+  res.json(`Mivoe ${req.params.title} has been deleted.`);
+});
+
+app.put("/movies/:title", async (req, res) => {
+  res.json(`Mivoe ${req.params.title} has been changed.`);
 });
 
 app.get("/", (req, res) => {
