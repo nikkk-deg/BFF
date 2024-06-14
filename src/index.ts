@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const movieRoutes = require("./routes/movie");
 const genreRoutes = require("./routes/genre");
 const commentRoutes = require("./routes/comment");
+const directorsRoutes = require("./routes/director");
 
 const url = "mongodb://localhost:27017/moviebox";
 const port = process.env.PORT || 3000;
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(movieRoutes);
 app.use(genreRoutes);
 app.use(commentRoutes);
+app.use(directorsRoutes);
 
 mongoose
   .connect(url)

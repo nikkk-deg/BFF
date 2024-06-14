@@ -5,12 +5,6 @@ const directorSchema = new Schema({
     type: String,
     required: true,
   },
-  films: [
-    {
-      ref: "Movies",
-      type: Schema.Types.ObjectId,
-    },
-  ],
 });
 
 export const Director = mongoose.model("Directors", directorSchema);
