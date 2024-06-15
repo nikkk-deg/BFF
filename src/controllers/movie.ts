@@ -1,4 +1,5 @@
 import { Movie } from "../models/movie";
+import { Director } from "./../models/director";
 
 const handlerError = (res: any, err: any) => {
   res.status(500).json(err);
@@ -49,11 +50,21 @@ const addNewComment = (req: any, res: any) => {
     .catch((err) => handlerError(res, err));
 };
 
+const getDirectorFromMovie = async (req: any, res: any) => {
+  const director = await Movie.findById(req.params.id).populate("directorId");
+  res.json(director?.directorId?.name);
+  // Movie.findById(req.params.id)
+  //   .populate("directorId")
+  //   .then((item: any) => res.status(200).json(item))
+  //   .catch((err) => handlerError(res, err));
+};
+
 module.exports = {
   getMovies,
   getOneMovie,
   deleteOneMovie,
   addOneMovie,
   updateOneMovie,
+  getDirectorFromMovie,
   addNewComment,
 };

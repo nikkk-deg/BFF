@@ -17,28 +17,29 @@ const addOneDirector = (req: any, res: any) => {
     .catch((err) => handlerError(res, err));
 };
 
-const findDirector = async (req: any, res: any) => {
-  //   const director = await Director.findOne({ name: "Frank Darabon" });
-  //   const newMovie = await Movie.create({
-  //     title: "Green Mile",
-  //     director: director,
-  //     year: 2001,
-  //   });
-  //   res.json(newMovie);
-
-  const newDirector = await Movie.findOne({ title: "Green Mile" }).populate(
-    "director"
-  );
-  res.json(newDirector);
-  //   const newOne = await Movie.findOne({ title: "Snatch" }).populate(
-  //     "Directors",
-  //     "name"
-  //   );
-  //   res.json(newOne?.director);
+const deleteDirector = (req: any, res: any) => {
+  Director.findByIdAndDelete(req.params.id)
+    .then((item: any) => res.status(200).json(item))
+    .catch((err) => handlerError(res, err));
 };
+
+const updateDirector = (req: any, res: any) => {
+  Director.findByIdAndUpdate(req.params.id, req.body)
+    .then((item: any) => res.status(200).json(item))
+    .catch((err) => handlerError(res, err));
+};
+
+// const findDirector = async (req: any, res: any) => {
+//   const newDirector = await Movie.findOne({ title: "Green Mile" }).populate(
+//     "director"
+//   );
+//   res.json(newDirector);
+// };
 
 module.exports = {
   getDirectors,
   addOneDirector,
-  findDirector,
+  deleteDirector,
+  updateDirector,
+  // findDirector,
 };

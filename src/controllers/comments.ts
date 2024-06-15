@@ -15,7 +15,21 @@ const addOneComment = (req: any, res: any) => {
     .catch((err) => handlerError(res, err));
 };
 
+const deleteComment = (req: any, res: any) => {
+  Comment.findByIdAndDelete(req.params.id)
+    .then((item: any) => res.status(200).json(item))
+    .catch((err) => handlerError(res, err));
+};
+
+const updateComment = (req: any, res: any) => {
+  Comment.findByIdAndUpdate(req.params.id, req.body)
+    .then((item: any) => res.status(200).json(item))
+    .catch((err) => handlerError(res, err));
+};
+
 module.exports = {
   getComments,
   addOneComment,
+  deleteComment,
+  updateComment,
 };

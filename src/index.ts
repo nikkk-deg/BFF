@@ -1,13 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const movieRoutes = require("./routes/movie");
 const genreRoutes = require("./routes/genre");
 const commentRoutes = require("./routes/comment");
 const directorsRoutes = require("./routes/director");
 
-const url = "mongodb://localhost:27017/moviebox";
-const port = process.env.PORT || 3000;
+const url = process.env.URL_TO_DB;
+const port = process.env.PORT;
 
 const app = express();
 app.use(express.json());
