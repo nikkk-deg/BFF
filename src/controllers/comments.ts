@@ -1,5 +1,6 @@
 import { Comment } from "../models/comment";
 import { handlerError } from "./error";
+import { query, validationResult, matchedData } from "express-validator";
 
 const getComments = (req: any, res: any) => {
   Comment.find()

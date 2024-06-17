@@ -1,5 +1,6 @@
 import { Genre } from "../models/genre";
 import { handlerError } from "./error";
+import { query, validationResult, matchedData } from "express-validator";
 
 const getGenres = (req: any, res: any) => {
   Genre.find()

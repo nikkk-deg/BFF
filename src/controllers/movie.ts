@@ -1,4 +1,6 @@
 import { Movie } from "../models/movie";
+import { query, validationResult, matchedData } from "express-validator";
+
 import { Director } from "./../models/director";
 
 const handlerError = (res: any, err: any) => {

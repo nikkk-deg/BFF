@@ -8,7 +8,7 @@ const genreRoutes = require("./routes/genre");
 const commentRoutes = require("./routes/comment");
 const directorsRoutes = require("./routes/director");
 
-const url = process.env.URL_TO_DB;
+const url = process.env.URL_TO_DB || "";
 const port = process.env.PORT;
 
 const app = express();
