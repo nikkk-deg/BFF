@@ -20,16 +20,6 @@ app.use(genreRoutes);
 app.use(commentRoutes);
 app.use(directorsRoutes);
 
-// app.post("/directors", baseDirectorChain(), (req, res) => {
-//   const result = validationResult(req);
-//   if (result.isEmpty()) {
-//     const data = matchedData(req);
-//     return res.send(`Hello, ${data.name}!`);
-//   }
-
-//   res.send({ errors: result.array() });
-// });
-
 mongoose
   .connect(url)
   .then(() => console.log("Connected to DB"))
