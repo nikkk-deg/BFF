@@ -1,36 +1,69 @@
 import { Genre } from "../models/genre";
+import { GenresCreateModel } from "../types/GenresCreateModel";
+import { GenresUpdateModel } from "../types/GenresUpdateModel";
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from "../types/types";
 import { handlerError } from "./error";
-import { query, validationResult, matchedData } from "express-validator";
+import { Request, Response } from "express";
+import { validationResult, matchedData } from "express-validator";
 
-const getGenres = (req: any, res: any) => {
+const handlerFindGenres = (req: Request, res: Response) => {
   Genre.find()
-    .then((item: any) => res.status(200).json(item))
+    .then((item) => res.status(200).json(item))
     .catch((err) => handlerError(res, err));
 };
 
-const addOneGenre = (req: any, res: any) => {
-  const genre = new Genre(req.body);
-  genre
-    .save()
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerAddGenre = (
+  req: RequestWithBody<GenresCreateModel>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    const genre = new Genre(data);
+    return genre
+      .save()
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+
+  res.send({ errors: result.array() });
 };
 
-const deleteGenre = (req: any, res: any) => {
-  Genre.findByIdAndDelete(req.params.id)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerDeleteGenre = (
+  req: RequestWithParams<{ id: string }>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    return Genre.findByIdAndDelete(data.id)
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
-const updateGenre = (req: any, res: any) => {
-  Genre.findByIdAndUpdate(req.params.id, req.body)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerUpdateGenre = (
+  req: RequestWithParamsAndBody<{ id: string }, GenresUpdateModel>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    return Genre.findByIdAndUpdate(data.id, data)
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
 module.exports = {
-  getGenres,
-  addOneGenre,
-  deleteGenre,
-  updateGenre,
+  handlerAddGenre,
+  handlerFindGenres,
+  handlerUpdateGenre,
+  handlerDeleteGenre,
 };

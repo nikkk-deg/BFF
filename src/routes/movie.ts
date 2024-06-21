@@ -1,21 +1,24 @@
 import express from "express";
+import {
+  createMovieChain,
+  deleteMovieChain,
+  findMovieChain,
+  updateMovieChain,
+} from "../controllers/validation";
 const {
-  getMovies,
-  getOneMovie,
-  deleteOneMovie,
-  addOneMovie,
-  updateOneMovie,
-  addNewComment,
-  getDirectorFromMovie,
+  handlerFindMovies,
+  handlerFindMovie,
+  handlerDeleteMovie,
+  handlerAddOneMovie,
+  handlerUpdateMovie,
 } = require("../controllers/movie");
 
 const routes = express.Router();
 
-routes.get("/movies", getMovies);
-routes.get("/movies/:id", getOneMovie);
-routes.delete("/movies/:id", deleteOneMovie);
-routes.post("/movies", addOneMovie);
-routes.patch("/movies/:id", updateOneMovie);
-routes.get("/moviesGetDirector/:id", getDirectorFromMovie);
+routes.get("/movies", handlerFindMovies);
+routes.get("/movies/:id", findMovieChain(), handlerFindMovie);
+routes.delete("/movies/:id", deleteMovieChain(), handlerDeleteMovie);
+routes.post("/movies", createMovieChain(), handlerAddOneMovie);
+routes.put("/movies/:id", updateMovieChain(), handlerUpdateMovie);
 
 module.exports = routes;

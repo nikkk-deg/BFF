@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const movieShema = new Schema({
+const movieSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -13,23 +13,23 @@ const movieShema = new Schema({
     type: Number,
     required: true,
   },
-  // genres: [
-  //   {
-  //     ref: "Genres",
-  //     type: Schema.Types.ObjectId,
-  //   },
-  // ],
-  // rating: Number,
-  // duration: {
-  //   hours: Number,
-  //   minutes: Number,
-  // },
-  // comment: [
-  //   {
-  //     ref: "Comments",
-  //     type: Schema.Types.ObjectId,
-  //   },
-  // ],
+  genres: [
+    {
+      ref: "Genres",
+      type: Schema.Types.ObjectId,
+    },
+  ],
+  rating: Number,
+  duration: {
+    hours: Number,
+    minutes: Number,
+  },
+  comment: [
+    {
+      ref: "Comments",
+      type: Schema.Types.ObjectId,
+    },
+  ],
 });
 
-export const Movie = mongoose.model("Movies", movieShema);
+export const Movie = mongoose.model("Movies", movieSchema);

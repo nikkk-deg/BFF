@@ -1,72 +1,94 @@
+import { Request, Response } from "express";
 import { Movie } from "../models/movie";
-import { query, validationResult, matchedData } from "express-validator";
+import { handlerError } from "./error";
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from "../types/types";
+import { MovieCreateModel } from "../types/MovieCreateModel";
+import { MovieUpdateModel } from "../types/MovieUpdateModel";
+import { matchedData, validationResult } from "express-validator";
 
-import { Director } from "./../models/director";
-
-const handlerError = (res: any, err: any) => {
-  res.status(500).json(err);
-};
-
-const getMovies = (req: any, res: any) => {
+const handlerFindMovies = (req: Request, res: Response) => {
   Movie.find()
-    .sort({ year: -1 })
-    .then((item: any) => res.status(200).json(item))
+    .then((item) => res.status(200).json(item))
     .catch((err) => handlerError(res, err));
 };
 
-const getOneMovie = (req: any, res: any) => {
-  Movie.findById(req.params.id)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerFindMovie = async (
+  req: RequestWithParams<{ id: string }>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    const director = await Movie.findById(data.id).populate("directorId");
+    const genres = await Movie.findById(data.id).populate("genres");
+    return Movie.findById(data.id)
+      .then((item) => {
+        const newItem = {
+          title: item?.title,
+          director: director?.directorId,
+          year: item?.year,
+          genres: genres?.genres,
+          rating: item?.rating,
+        };
+        res.status(200).json(newItem);
+      })
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
-const deleteOneMovie = (req: any, res: any) => {
-  Movie.findByIdAndDelete(req.params.id)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerDeleteMovie = (
+  req: RequestWithParams<{ id: string }>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    return Movie.findByIdAndDelete(data.id)
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
-const addOneMovie = (req: any, res: any) => {
-  const movie = new Movie(req.body);
-  movie
-    .save()
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerAddOneMovie = (
+  req: RequestWithBody<MovieCreateModel>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    const movie = new Movie(data);
+    return movie
+      .save()
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
-const updateOneMovie = (req: any, res: any) => {
-  Movie.findByIdAndUpdate(req.params.id, req.body)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
-};
-
-const addNewComment = (req: any, res: any) => {
-  Movie.findById(req.params.id)
-    .then((item: any) => {
-      let newComments = item.reviews;
-      newComments.push(req.body.newReview);
-      Movie.findByIdAndUpdate(req.params.id, { reviews: newComments }).then(
-        (item: any) => res.status(200).json(item)
-      );
-    })
-    .catch((err) => handlerError(res, err));
-};
-
-const getDirectorFromMovie = async (req: any, res: any) => {
-  const director = await Movie.findById(req.params.id).populate("directorId");
-  res.json(director?.directorId?.name);
-  // Movie.findById(req.params.id)
-  //   .populate("directorId")
-  //   .then((item: any) => res.status(200).json(item))
-  //   .catch((err) => handlerError(res, err));
+const handlerUpdateMovie = (
+  req: RequestWithParamsAndBody<{ id: string }, MovieUpdateModel>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    return Movie.findByIdAndUpdate(data.id, data)
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
 module.exports = {
-  getMovies,
-  getOneMovie,
-  deleteOneMovie,
-  addOneMovie,
-  updateOneMovie,
-  getDirectorFromMovie,
-  addNewComment,
+  handlerFindMovies,
+  handlerFindMovie,
+  handlerDeleteMovie,
+  handlerAddOneMovie,
+  handlerUpdateMovie,
 };

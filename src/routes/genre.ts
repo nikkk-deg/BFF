@@ -1,16 +1,21 @@
 import express from "express";
+import {
+  baseGenreChain,
+  deleteGenreChain,
+  updateGenreChain,
+} from "../controllers/validation";
 const {
-  getGenres,
-  addOneGenre,
-  deleteGenre,
-  updateGenre,
+  handlerAddGenre,
+  handlerFindGenres,
+  handlerUpdateGenre,
+  handlerDeleteGenre,
 } = require("../controllers/genre");
 
 const routes = express.Router();
 
-routes.get("/genres", getGenres);
-routes.post("/genres", addOneGenre);
-routes.delete("/genres/:id", deleteGenre);
-routes.put("/genres/:id", updateGenre);
+routes.get("/genres", handlerFindGenres);
+routes.post("/genres", baseGenreChain(), handlerAddGenre);
+routes.delete("/genres/:id", deleteGenreChain(), handlerDeleteGenre);
+routes.put("/genres/:id", updateGenreChain(), handlerUpdateGenre);
 
 module.exports = routes;

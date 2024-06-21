@@ -1,16 +1,21 @@
 import express from "express";
+import {
+  baseCommentChain,
+  deleteCommentChain,
+  updateCommentChain,
+} from "../controllers/validation";
 const {
-  getComments,
-  addOneComment,
-  deleteComment,
-  updateComment,
+  handlerFindComments,
+  handlerAddOneComment,
+  handlerDeleteComment,
+  handlerUpdateComment,
 } = require("../controllers/comments");
 
 const routes = express.Router();
 
-routes.get("/comments", getComments);
-routes.post("/comments", addOneComment);
-routes.delete("/comments/:id", deleteComment);
-routes.put("/comments/:id", updateComment);
+routes.get("/comments", handlerFindComments);
+routes.post("/comments", baseCommentChain(), handlerAddOneComment);
+routes.delete("/comments/:id", deleteCommentChain(), handlerDeleteComment);
+routes.put("/comments/:id", updateCommentChain(), handlerUpdateComment);
 
 module.exports = routes;

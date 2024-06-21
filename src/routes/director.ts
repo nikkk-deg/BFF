@@ -1,11 +1,10 @@
 import express from "express";
 import {
   baseDirectorChain,
+  deleteDirectorChain,
   updateDirectorChain,
 } from "../controllers/validation";
-import { body, matchedData, validationResult } from "express-validator";
-import { Director } from "../models/director";
-import { handlerError } from "../controllers/error";
+
 const {
   handlerFindDirectors,
   handlerAddDirector,
@@ -14,13 +13,10 @@ const {
 } = require("../controllers/director");
 
 const routes = express.Router();
-const array: any[] = [];
 
 routes.get("/directors", handlerFindDirectors);
-
 routes.post("/directors", baseDirectorChain(), handlerAddDirector);
-
-routes.delete("/directors/:id", handlerDeleteDirector);
+routes.delete("/directors/:id", deleteDirectorChain(), handlerDeleteDirector);
 routes.put("/directors/:id", updateDirectorChain(), handlerUpdateDirector);
 
 module.exports = routes;

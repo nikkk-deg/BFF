@@ -1,36 +1,68 @@
+import { Request, Response } from "express";
 import { Comment } from "../models/comment";
+import { CommentCreateModel } from "../types/CommentCreateModel";
+import { CommentUpdateModel } from "../types/CommentUpdateModel";
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from "../types/types";
 import { handlerError } from "./error";
-import { query, validationResult, matchedData } from "express-validator";
+import { matchedData, validationResult } from "express-validator";
 
-const getComments = (req: any, res: any) => {
+const handlerFindComments = (req: Request, res: Response) => {
   Comment.find()
-    .then((item: any) => res.status(200).json(item))
+    .then((item) => res.status(200).json(item))
     .catch((err) => handlerError(res, err));
 };
 
-const addOneComment = (req: any, res: any) => {
-  const comment = new Comment(req.body);
-  comment
-    .save()
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerAddOneComment = (
+  req: RequestWithBody<CommentCreateModel>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    const comment = new Comment(data);
+    return comment
+      .save()
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
-const deleteComment = (req: any, res: any) => {
-  Comment.findByIdAndDelete(req.params.id)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerDeleteComment = (
+  req: RequestWithParams<{ id: string }>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    return Comment.findByIdAndDelete(data.id)
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
-const updateComment = (req: any, res: any) => {
-  Comment.findByIdAndUpdate(req.params.id, req.body)
-    .then((item: any) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+const handlerUpdateComment = (
+  req: RequestWithParamsAndBody<{ id: string }, CommentUpdateModel>,
+  res: Response
+) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    const data = matchedData(req);
+    return Comment.findByIdAndUpdate(data.id, data)
+      .then((item) => res.status(200).json(item))
+      .catch((err) => handlerError(res, err));
+  }
+  res.send({ errors: result.array() });
 };
 
 module.exports = {
-  getComments,
-  addOneComment,
-  deleteComment,
-  updateComment,
+  handlerFindComments,
+  handlerAddOneComment,
+  handlerDeleteComment,
+  handlerUpdateComment,
 };
