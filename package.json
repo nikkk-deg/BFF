@@ -16,10 +16,12 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.12",
+    "buffer": "^6.0.3",
     "compile-env-templates": "^0.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express-validator": "^7.1.0",
+    "mongojs": "^3.1.0",
     "mongoose": "^8.4.0",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",

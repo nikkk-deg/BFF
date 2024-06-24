@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import { body, matchedData, query, validationResult } from "express-validator";
 import { baseDirectorChain } from "./controllers/validation";
+import { Movie } from "./models/movie";
+import { formatDocToAddInDB } from "./controllers/formatData";
 dotenv.config();
 
 const movieRoutes = require("./routes/movie");
@@ -24,5 +26,29 @@ mongoose
   .connect(url)
   .then(() => console.log("Connected to DB"))
   .catch(() => console.log("Not connected to DB"));
+
+// const writeDataFromFS = async () => {
+//   const fs = require("node:fs/promises");
+//   const file = await fs.readFile(
+//     "C:\\Users\\user\\Documents\\BFF\\json\\moviebox.movies.json",
+//     {
+//       encoding: "utf8",
+//     }
+//   );
+//   const parsedFile = JSON.parse(file);
+//   formatDocToAddInDB(parsedFile);
+//   // const formatedFile = formatDocToAddInDB(parsedFile);
+// //   const movie = new Movie(formatedFile);
+// //   movie
+// //     .save()
+// //     .then((item) => console.log(item))
+// //     .catch((err) => console.log(err));
+// // };
+
+// try {
+//   writeDataFromFS();
+// } catch (err) {
+//   console.log(err);
+// }
 
 app.listen(port, () => console.log(`App listining on ${port}`));
