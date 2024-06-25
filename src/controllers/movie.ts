@@ -10,10 +10,31 @@ import { MovieCreateModel } from "../types/MovieCreateModel";
 import { MovieUpdateModel } from "../types/MovieUpdateModel";
 import { matchedData, validationResult } from "express-validator";
 
+const NodeCache = require("node-cache");
+const movieCache = new NodeCache({ stdTTL: 10 });
+
 const handlerFindMovies = (req: Request, res: Response) => {
-  Movie.find()
-    .then((item) => res.status(200).json(item))
-    .catch((err) => handlerError(res, err));
+  const query = Movie.find();
+  const { rating, year } = req.query;
+  if (rating) {
+    query.where({ rating: rating });
+  }
+  if (year) {
+    query.where({ year: year });
+  }
+  if (movieCache.has("movies")) {
+    console.log("Getting that from Cache");
+    return res.json(movieCache.get("movies"));
+  } else {
+    query
+      .exec()
+      .then((item) => {
+        console.log("Getting that from DB");
+        movieCache.set("movies", item);
+        res.status(200).json(item);
+      })
+      .catch((err) => handlerError(res, err));
+  }
 };
 
 const handlerFindMovie = async (
@@ -65,7 +86,7 @@ const handlerAddOneMovie = (
     const movie = new Movie(data);
     return movie
       .save()
-      .then((item) => res.status(200).json(item))
+      .then((item) => res.status(201).json(item))
       .catch((err) => handlerError(res, err));
   }
   res.send({ errors: result.array() });
