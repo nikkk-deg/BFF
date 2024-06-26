@@ -1,11 +1,11 @@
 import express from "express";
-import { createAndAuthUser } from "../controllers/validation";
+import { createUser, authUser } from "../controllers/validation";
 
 const { handlerCreateUser, handlerAuthUser } = require("../controllers/user");
 
 const routes = express.Router();
 
-routes.post("/user", createAndAuthUser(), handlerCreateUser);
-routes.post("/user/auth", createAndAuthUser(), handlerAuthUser);
+routes.post("/user", createUser(), handlerCreateUser);
+routes.post("/user/auth", authUser(), handlerAuthUser);
 
 module.exports = routes;

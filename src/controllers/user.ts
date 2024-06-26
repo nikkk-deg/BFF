@@ -1,30 +1,36 @@
 import { validationResult, matchedData } from "express-validator";
 import { User } from "../models/user";
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { handlerError } from "./error";
+import { jwtDecode } from "jwt-decode";
 
-const handlerCreateUser = (req: Request, res: Response) => {
-  const result = validationResult(req);
-  if (result.isEmpty()) {
-    const data = matchedData(req);
-    const user = new User(data);
-    return user
-      .save()
-      .then((json) => res.status(201).json(json))
-      .catch((err) => handlerError(res, err));
-  }
-  res.send({ errors: result.array() });
+const handlerCreateUser = async (req: Request, res: Response) => {
+  var jwt = require("jsonwebtoken");
+  const email = req.body.email;
+  const password = req.body.password;
+  const token = await jwt.sign({ email, password }, process.env.JWT_SECRET);
+  const user = new User({
+    email: req.body.email,
+    token: token,
+  });
+  user
+    .save()
+    .then((json) => res.status(201).json(json))
+    .catch((err) => handlerError(res, err));
 };
 
-const handlerAuthUser = (req: Request, res: Response) => {
-  const result = validationResult(req);
-  if (result.isEmpty()) {
-    const data = matchedData(req);
-    User.find({ email: data.email })
-      .then((json) => res.json(json))
-      .catch((err) => handlerError(res, err));
-  }
-  res.send({ errors: result.array() });
+const handlerAuthUser = async (req: Request, res: Response) => {
+  var jwt = require("jsonwebtoken");
+  const user = User.find({ email: req.body.email });
+  user.then((json) => res.send(json?.email));
+  // res.send(user);
+  // const email = req.body.email;
+  // const password = req.body.password;
+  // const token = await jwt.sign({ email, password }, process.env.JWT_SECRET);
+  // res.send(token);
+  // User.find({ token: token })
+  //   .then((json) => res.status(201).json(json))
+  //   .catch((err) => handlerError(res, err));
 };
 
 module.exports = {

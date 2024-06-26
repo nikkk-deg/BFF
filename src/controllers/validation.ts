@@ -1,3 +1,4 @@
+import { query } from "express";
 import { body, param } from "express-validator";
 
 export const baseDirectorChain = () => body("name").notEmpty().escape();
@@ -40,7 +41,13 @@ export const updateMovieChain = () => [
   body("title").notEmpty().escape(),
 ];
 
-export const createAndAuthUser = () => [
+export const createUser = () => [
   body("email").notEmpty().trim().isEmail().escape(),
-  body("password").notEmpty().isLength({ min: 4 }),
+  body("password").notEmpty().trim().isLength({ min: 4 }),
+];
+
+export const authUser = () => [
+  body("email").notEmpty().trim().isEmail().escape(),
+  body("password").notEmpty().trim().isLength({ min: 4 }),
+  param("token").notEmpty(),
 ];
