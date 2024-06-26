@@ -39,3 +39,8 @@ export const updateMovieChain = () => [
   param("id").isMongoId().escape(),
   body("title").notEmpty().escape(),
 ];
+
+export const createAndAuthUser = () => [
+  body("email").notEmpty().trim().isEmail().escape(),
+  body("password").notEmpty().isLength({ min: 4 }),
+];
