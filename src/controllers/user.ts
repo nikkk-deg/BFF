@@ -20,17 +20,16 @@ const handlerCreateUser = async (req: Request, res: Response) => {
 };
 
 const handlerAuthUser = async (req: Request, res: Response) => {
-  var jwt = require("jsonwebtoken");
-  const user = User.find({ email: req.body.email });
-  user.then((json) => res.send(json?.email));
-  // res.send(user);
-  // const email = req.body.email;
-  // const password = req.body.password;
-  // const token = await jwt.sign({ email, password }, process.env.JWT_SECRET);
-  // res.send(token);
-  // User.find({ token: token })
-  //   .then((json) => res.status(201).json(json))
-  //   .catch((err) => handlerError(res, err));
+  const jwt = require("jsonwebtoken");
+  User.find({ email: req.body.email })
+    .then((json) => {
+      const decoded = jwt.verify(json[0].token, process.env.JWT_SECRET);
+      if (decoded.password === req.body.password) {
+        return res.status(200).json(`Вход выполнен успешно ${json[0].email}`);
+      }
+      return res.json("Wrong email or password...");
+    })
+    .catch((err) => res.send("User not found"));
 };
 
 module.exports = {
