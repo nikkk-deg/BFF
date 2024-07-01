@@ -15,6 +15,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  favorites: String,
 });
 
 export const User = mongoose.model("User", userSchema);

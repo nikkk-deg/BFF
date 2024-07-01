@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { title } from "process";
 
 const movieSchema = new Schema({
   title: {
@@ -30,6 +31,7 @@ const movieSchema = new Schema({
       type: Schema.Types.ObjectId,
     },
   ],
+  description: String,
 });
 
 export const Movie = mongoose.model("Movies", movieSchema);
