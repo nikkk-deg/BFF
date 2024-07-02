@@ -15,7 +15,12 @@ const handlerCreateUser = async (req: Request, res: Response) => {
   });
   user
     .save()
-    .then((json) => res.status(201).json(json))
+    .then((json) =>
+      res.status(201).json({
+        email: json.email,
+        // token: json.token,
+      })
+    )
     .catch((err) => handlerError(res, err));
 };
 
@@ -25,13 +30,9 @@ const handlerAuthUser = async (req: Request, res: Response) => {
     .then((json) => {
       const decoded = jwt.verify(json[0].token, process.env.JWT_SECRET);
       if (decoded.password === req.body.password) {
-        return res
-          .status(200)
-          .json(
-            `Вход выполнен успешно ${json[0].email}. Token: Bearer ${json[0].token}`
-          );
+        return res.status(200).json(`Вход выполнен успешно ${json[0].email}.`);
       }
-      return res.json("Wrong email or password...");
+      return res.status(404).json("Wrong email or password...");
     })
     .catch((err) => res.send("User not found"));
 };

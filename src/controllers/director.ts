@@ -26,7 +26,11 @@ const handlerAddDirector = (
     const director = new Director(data);
     return director
       .save()
-      .then((item) => res.status(200).json(item))
+      .then((item) =>
+        res.status(200).json({
+          name: item.name,
+        })
+      )
       .catch((err) => handlerError(res, err));
   }
   res.send({ errors: result.array() });
