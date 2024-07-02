@@ -16,7 +16,7 @@ const userRoutes = require("./routes/user");
 const url = process.env.URL_TO_DB || "";
 const port = process.env.PORT;
 
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(movieRoutes);
 app.use(genreRoutes);
