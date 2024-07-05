@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
+  _id: Schema.ObjectId,
   email: {
     type: String,
     required: true,

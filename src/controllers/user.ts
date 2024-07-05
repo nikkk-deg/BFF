@@ -43,14 +43,18 @@ const handlerAuthUser = async (req: Request, res: Response) => {
 
 const handlerAddFav = async (req: Request, res: Response) => {
   if (req.body.movies && req.body.token) {
-    return User.find({ token: req.body.token })
-      .then((json) => {
-        if (json) {
-          return res.status(204);
-        }
-        return res.status(404).json({ message: "User not found" });
-      })
-      .catch((err) => res.status(404).json({ message: "User not found" }));
+    return await User.find({ token: req.body.token }).then(async (json) => {
+      if (json.length !== 0) {
+        return await User.findOneAndUpdate(
+          { token: req.body.token },
+          { favorites: req.body.movies }
+        )
+          .then((json) => res.status(200).json({ favorites: json?.favorites }))
+          .catch((err) => res.send(err));
+      }
+
+      res.status(404).json({ message: "User not found" });
+    });
   }
   return res.status(400).json({ message: "Wrong body of request" });
 };
